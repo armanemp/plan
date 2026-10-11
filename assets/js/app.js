@@ -180,8 +180,10 @@
     if(!c){setHtml("chartOHLC",'<span>O <b>—</b></span><span>H <b>—</b></span><span>L <b>—</b></span><span>C <b>—</b></span>');return;}
     setHtml("chartOHLC",'<span>O <b>'+esc(formatPrice(c.open))+'</b></span><span>H <b>'+esc(formatPrice(c.high))+'</b></span><span>L <b>'+esc(formatPrice(c.low))+'</b></span><span>C <b>'+esc(formatPrice(c.close))+'</b></span>');
   }
-  function renderChart(a,p,chart){
+  function renderChart(a,p,chart,preserveView=false){
     const container=$("priceChart");
+    let previousLogicalRange=null;
+    if(preserveView&&state.chartApi){try{previousLogicalRange=state.chartApi.timeScale().getVisibleLogicalRange();}catch(_){previousLogicalRange=null;}}
     if(state.chartApi){try{state.chartApi.remove();}catch(_){}state.chartApi=null;state.chartSeries=null;state.chartMarkers=null;}
     const candles=list(chart&&chart.candles);
     const validCandles=candles.filter(c=>[c.open,c.high,c.low,c.close].every(v=>num(v)!==null)).slice().sort((x,y)=>String(x.time).localeCompare(String(y.time)));
@@ -244,6 +246,7 @@
         if(volumes.length){try{const volumeSeries=api.addSeries(TV.HistogramSeries,{priceFormat:{type:"volume"},lastValueVisible:false,priceLineVisible:false},1);volumeSeries.setData(volumes);if(api.panes()[1])api.panes()[1].setHeight(90);}catch(_){}}
       }
       api.timeScale().fitContent();
+      if(previousLogicalRange&&Number.isFinite(previousLogicalRange.from)&&Number.isFinite(previousLogicalRange.to)){try{api.timeScale().setVisibleLogicalRange(previousLogicalRange);}catch(_){}}
       api.subscribeCrosshairMove(param=>{
         if(!param||!param.time){updateOHLC(validCandles[validCandles.length-1]);return;}
         const datum=param.seriesData&&param.seriesData.get(series);
@@ -435,15 +438,15 @@
     $("themeToggle").addEventListener("click",()=>{
       const next=document.documentElement.dataset.theme==="light"?"dark":"light";
       document.documentElement.dataset.theme=next;store.set("planTheme",next);
-      const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));
+      const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe),true);
       toast(next==="light"?"پوستهٔ روشن فعال شد.":"پوستهٔ تیره فعال شد.");
     });
     $("resetChart").addEventListener("click",()=>{if(state.chartApi)state.chartApi.timeScale().fitContent();else{const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));}});
-    $("chartTypeToggle").addEventListener("click",()=>{state.chartType=state.chartType==="candles"?"line":"candles";const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));});
-    $("chartVolumeToggle").addEventListener("click",()=>{if($("chartVolumeToggle").disabled)return;state.showVolume=!state.showVolume;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));});
-    $("showLevels").addEventListener("change",e=>{state.showLevels=e.target.checked;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));});
-    $("showZones").addEventListener("change",e=>{state.showZones=e.target.checked;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));});
-    $("showMarkers").addEventListener("change",e=>{state.showMarkers=e.target.checked;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));});
+    $("chartTypeToggle").addEventListener("click",()=>{state.chartType=state.chartType==="candles"?"line":"candles";const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe),true);});
+    $("chartVolumeToggle").addEventListener("click",()=>{if($("chartVolumeToggle").disabled)return;state.showVolume=!state.showVolume;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe),true);});
+    $("showLevels").addEventListener("change",e=>{state.showLevels=e.target.checked;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe),true);});
+    $("showZones").addEventListener("change",e=>{state.showZones=e.target.checked;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe),true);});
+    $("showMarkers").addEventListener("change",e=>{state.showMarkers=e.target.checked;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe),true);});
     $("qualityChecks").addEventListener("change",e=>{const input=e.target.closest("[data-quality-index]");if(input)persistQuality(Number(input.dataset.qualityIndex),input.checked);});
     $("saveJournal").addEventListener("click",persistJournal);
     $("journalText").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")persistJournal();});
