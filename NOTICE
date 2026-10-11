@@ -1,0 +1,4 @@
+TradingView Lightweight Charts™
+Copyright (c) 2025 TradingView, Inc. https://www.tradingview.com/
+
+PLAN uses the TradingView Lightweight Charts library from a CDN. The chart library is distributed under the Apache License 2.0. This notice is retained to comply with third-party attribution requirements. See https://github.com/tradingview/lightweight-charts for the library license and current notices.
