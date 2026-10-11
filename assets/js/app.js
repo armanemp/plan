@@ -133,7 +133,7 @@
     $("chartTypeToggle").textContent=state.chartType==="candles"?"کندلی":"خطی";
     $("chartTypeToggle").setAttribute("aria-pressed",String(state.chartType==="line"));
     volumeButton.setAttribute("aria-pressed",String(state.showVolume));
-    updateOHLC(candles[candles.length-1]);
+    if(state.chartType==="line")setHtml("chartOHLC",'<span>PRICE <b>'+esc(formatPrice(candles.length?candles[candles.length-1].close:"—"))+'</b></span>');else updateOHLC(candles[candles.length-1]);
     if(!window.LightweightCharts||!candles.length){setText("chartReferenceTime",str(a.referenceAt||a.referenceSource,"منبع/زمان ثبت نشده"));return;}
     const TV=window.LightweightCharts;
     state.chartApi=TV.createChart(container,{
@@ -185,7 +185,7 @@
       if(!param||!param.time){updateOHLC(candles[candles.length-1]);return;}
       const datum=param.seriesData&&param.seriesData.get(series);
       if(!datum){updateOHLC(candles[candles.length-1]);return;}
-      if(state.chartType==="line"){updateOHLC({open:datum.value,high:datum.value,low:datum.value,close:datum.value});return;}
+      if(state.chartType==="line"){setHtml("chartOHLC",'<span>PRICE <b>'+esc(formatPrice(datum.value))+'</b></span>');return;}
       updateOHLC(datum);
       const dateKey=chartTimeKey(param.time);
       const original=candles.find(c=>chartTimeKey(c.time)===dateKey);
