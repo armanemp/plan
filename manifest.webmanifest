@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "PLAN — میز تحلیل بازار",
+  "short_name": "PLAN",
+  "description": "میز تحلیل بازار و پلن‌های روزانه",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0b1014",
+  "theme_color": "#0b1014",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
