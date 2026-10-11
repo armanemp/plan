@@ -26,8 +26,8 @@
   const impactLabel = value => ({high:"زیاد",medium:"متوسط",low:"کم"}[value]||"نامشخص");
   const importanceLabel = value => ({high:"بالا",medium:"متوسط",low:"پایین"}[value]||"—");
   const byDate = plans.filter(p=>typeof p.date==="string").sort((a,b)=>b.date.localeCompare(a.date));
-  const dateLabel = value => {if(!value)return "—";const d=new Date(value+"T12:00:00");return Number.isNaN(d.getTime())?value:new Intl.DateTimeFormat("fa-IR",{year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Baku"}).format(d);};
-  const dateShort = value => {if(!value)return "—";const d=new Date(value+"T12:00:00");return Number.isNaN(d.getTime())?value:new Intl.DateTimeFormat("fa-IR",{month:"short",day:"numeric",timeZone:"Asia/Baku"}).format(d);};
+  const dateLabel = value => {if(!value)return "—";const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);const d=m?new Date(Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3]),12)):new Date(value);return Number.isNaN(d.getTime())?value:new Intl.DateTimeFormat("fa-IR",{year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Baku"}).format(d);};
+  const dateShort = value => {if(!value)return "—";const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);const d=m?new Date(Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3]),12)):new Date(value);return Number.isNaN(d.getTime())?value:new Intl.DateTimeFormat("fa-IR",{month:"short",day:"numeric",timeZone:"Asia/Baku"}).format(d);};
   const activePlan = () => byDate.find(p=>p.date===state.date)||byDate[0]||null;
   const activeAsset = () => {const p=activePlan();return p&&list(p.assets)[state.assetIndex]||null;};
   const chartFor = (asset,tf) => {const charts=list(asset&&asset.charts);return charts.find(c=>c&&c.timeframe===tf)||charts[0]||null;};
@@ -40,12 +40,15 @@
   const currentDateLabel = () => new Intl.DateTimeFormat("fa-IR",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Baku"}).format(new Date());
   const latestCandle = asset => {const charts=list(asset&&asset.charts);let chosen=null;charts.forEach(c=>{const candles=list(c&&c.candles);if(candles.length){const k=candles[candles.length-1];if(!chosen||String(k.time)>String(chosen.time))chosen=k;}});return chosen;};
   function chartTime(value){
-    const m=String(value||"").match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(m)return {year:Number(m[1]),month:Number(m[2]),day:Number(m[3])};
-    const d=new Date(value);
-    return {year:d.getUTCFullYear(),month:d.getUTCMonth()+1,day:d.getUTCDate()};
+    const m=String(value||"").match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:Z|[+-]\d{2}:?\d{2})?)?$/);
+    if(!m){const fallback=new Date(value);return Number.isNaN(fallback.getTime())?value:Math.floor(fallback.getTime()/1000);}
+    const year=Number(m[1]),month=Number(m[2]),day=Number(m[3]);
+    const isDateOnly=!m[4]||(Number(m[4])===0&&Number(m[5]||0)===0&&Number(m[6]||0)===0);
+    if(isDateOnly)return {year,month,day};
+    const stamp=new Date(value);
+    return Number.isNaN(stamp.getTime())?{year,month,day}:Math.floor(stamp.getTime()/1000);
   }
-  const timeKey = v => v&&typeof v==="object"&&"year" in v?String(v.year)+"-"+String(v.month).padStart(2,"0")+"-"+String(v.day).padStart(2,"0"):String(v||"").slice(0,10);
+  const timeKey = v => {const t=chartTime(v);return typeof t==="number"?"ts:"+t:"d:"+String(t.year)+"-"+String(t.month).padStart(2,"0")+"-"+String(t.day).padStart(2,"0");};
   function formatTime(value){
     if(value&&typeof value==="object"&&"year" in value){return new Intl.DateTimeFormat("fa-IR",{month:"short",day:"numeric",timeZone:"Asia/Baku"}).format(new Date(Date.UTC(value.year,value.month-1,value.day,12)));}
     const d=typeof value==="number"?new Date(value<1e12?value*1000:value):new Date(value);
@@ -123,7 +126,7 @@
       setText("summaryBias",biasLabel(p.bias));setText("summaryBiasNote",str(p.biasNote,"جهت اجرایی نیازمند تأیید است"));
       setText("summaryRegime",str(p.regime,"نامشخص"));setText("summaryDayType","نوع روز: "+str(p.dayType,"ثبت نشده"));
       setText("summaryAssets",faNumber(list(p.assets).length));setText("summaryEvents",faNumber(list(p.events).length));
-      setText("summaryEventsNote",list(p.events).length?list(p.events).filter(e=>e.impact==="high").length+" رویداد با اهمیت بالا ثبت‌شده":"رویدادی ثبت نشده");
+      setText("summaryEventsNote",list(p.events).length?(list(p.events).filter(e=>e.impact==="high").length+" رویداد با اهمیت بالا · "+list(p.events).filter(e=>!e.impact).length+" رویداد با اهمیت نامشخص"):"رویدادی ثبت نشده");
       const gates=qualityGates(p),complete=gates.filter(g=>g.done).length,total=gates.length;
       setText("summaryQuality",total&&complete===total?"چک‌لیست تکمیل":"در انتظار بازبینی");
       setText("qualityNote",total?faNumber(complete)+" از "+faNumber(total)+" کنترل انجام‌شده":"کنترلی ثبت نشده");
@@ -208,8 +211,8 @@
         grid:{vertLines:{color:document.documentElement.dataset.theme==="light"?"#e5ece8":"#1e2a32"},horzLines:{color:document.documentElement.dataset.theme==="light"?"#e5ece8":"#1e2a32"}},
         crosshair:{mode:TV.CrosshairMode.Normal,vertLine:{color:"#70818a",width:1,style:TV.LineStyle.Dashed,labelBackgroundColor:"#26343d"},horzLine:{color:"#70818a",width:1,style:TV.LineStyle.Dashed,labelBackgroundColor:"#26343d"}},
         rightPriceScale:{borderColor:document.documentElement.dataset.theme==="light"?"#d6e0da":"#2a353f",autoScale:true,scaleMargins:{top:.12,bottom:.12},alignLabels:true},
-        timeScale:{borderColor:document.documentElement.dataset.theme==="light"?"#d6e0da":"#2a353f",timeVisible:true,secondsVisible:false,rightOffset:3,barSpacing:18,minBarSpacing:3},
-        localization:{locale:"en-GB",dateFormat:"dd MMM yyyy",priceFormatter:formatPrice},
+        timeScale:{borderColor:document.documentElement.dataset.theme==="light"?"#d6e0da":"#2a353f",timeVisible:true,secondsVisible:false,rightOffset:3,barSpacing:18,minBarSpacing:3,tickMarkFormatter:(time,type)=>{if(typeof time==="number")return new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Baku"}).format(new Date(time*1000));return new Intl.DateTimeFormat("en-GB",{day:"2-digit",month:"short",timeZone:"UTC"}).format(new Date(Date.UTC(time.year,time.month-1,time.day,12)));}},
+        localization:{locale:"en-GB",dateFormat:"dd MMM yyyy",priceFormatter:formatPrice,timeFormatter:time=>{if(typeof time==="number")return new Intl.DateTimeFormat("en-GB",{year:"numeric",month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Baku"}).format(new Date(time*1000));return new Intl.DateTimeFormat("en-GB",{year:"numeric",month:"short",day:"2-digit",timeZone:"UTC"}).format(new Date(Date.UTC(time.year,time.month-1,time.day,12)));}},
         handleScroll:{mouseWheel:true,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},
         handleScale:{mouseWheel:true,pinch:true,axisPressedMouseMove:true,axisDoubleClickReset:true}
       });
@@ -270,7 +273,7 @@
   function renderNextEvent(p){
     const events=list(p.events).slice().sort((a,b)=>String(a.time||"99:99").localeCompare(String(b.time||"99:99")));
     const e=events[0];if(!e){setHtml("nextEvent",empty("رویدادی ثبت نشده است."));return;}
-    setHtml("nextEvent",'<div class="event-card-mini"><span class="event-card-time">'+esc(e.time||"—")+'</span><div><strong>'+esc(e.name||"رویداد اقتصادی")+'</strong><p>'+esc(e.description||e.condition||"جزئیات ثبت نشده")+'</p><span class="impact-tag impact-'+esc(e.impact||"low")+'">اهمیت '+esc(impactLabel(e.impact))+'</span></div></div>');
+    setHtml("nextEvent",'<div class="event-card-mini"><span class="event-card-time">'+esc(e.time||"—")+'</span><div><strong>'+esc(e.name||"رویداد اقتصادی")+'</strong><p>'+esc(e.description||e.condition||"جزئیات ثبت نشده")+'</p><span class="impact-tag impact-'+esc(e.impact||"unknown")+'">اهمیت '+esc(impactLabel(e.impact))+'</span></div></div>');
   }
   function renderDashboardScenarios(p){
     const scenarios=list(p.scenarios).slice(0,4);
@@ -316,7 +319,7 @@
   }
   function renderCalendar(p){
     const events=list(p.events);
-    setHtml("eventsList",events.length?events.slice().sort((a,b)=>String(a.time||"99:99").localeCompare(String(b.time||"99:99"))).map(e=>'<article class="stack-card"><div class="stack-card-head"><div><h4>'+esc(e.name||"رویداد")+'</h4><p>'+esc(e.description||"جزئیات ثبت نشده")+'</p></div><span class="event-time">'+esc(e.time||"تمام روز / زمان ثبت نشده")+'</span></div><div class="stack-foot"><span class="impact-tag impact-'+esc(e.impact||"low")+'">اهمیت '+esc(impactLabel(e.impact))+'</span> '+esc(e.condition||"برنامهٔ واکنش ثبت نشده")+'</div></article>').join(""):empty("رویدادی ثبت نشده است."));
+    setHtml("eventsList",events.length?events.slice().sort((a,b)=>String(a.time||"99:99").localeCompare(String(b.time||"99:99"))).map(e=>'<article class="stack-card"><div class="stack-card-head"><div><h4>'+esc(e.name||"رویداد")+'</h4><p>'+esc(e.description||"جزئیات ثبت نشده")+'</p></div><span class="event-time">'+esc(e.time||"تمام روز / زمان ثبت نشده")+'</span></div><div class="stack-foot"><span class="impact-tag impact-'+esc(e.impact||"unknown")+'">اهمیت '+esc(impactLabel(e.impact))+'</span> '+esc(e.condition||"برنامهٔ واکنش ثبت نشده")+'</div></article>').join(""):empty("رویدادی ثبت نشده است."));
     const sessions=list(p.sessions);
     setHtml("sessionsList",sessions.length?sessions.map(s=>'<article class="stack-card"><div class="stack-card-head"><h4>'+esc(s.name||"سشن")+'</h4><span class="stack-meta">'+esc(s.time||"—")+'</span></div><p>'+esc(s.description||"برنامه ثبت نشده")+'</p></article>').join(""):empty("برنامهٔ سشن‌ها ثبت نشده است."));
     const sources=list(p.sources);
