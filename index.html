@@ -3,176 +3,171 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10141b">
-  <meta name="description" content="دفترچهٔ استاتیک و آفلاین پلن‌های روزانهٔ بازار؛ سناریوها، سطوح، رویدادها و مدیریت ریسک.">
-  <title>PLAN — دفترچهٔ پلن معاملاتی</title>
+  <meta name="theme-color" content="#0b0e12">
+  <meta name="description" content="میز تحلیل روزانه بازار؛ چارت، سناریوهای شرطی، سطوح، رویدادها و کنترل ریسک در یک دفترچه آرشیوی.">
+  <title>PLAN — میز تحلیل بازار</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
-  <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+  <a class="skip-link" href="#main">رفتن به محتوای اصلی</a>
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="صفحهٔ اصلی PLAN">
-        <span class="brand-mark" aria-hidden="true">P<span>.</span></span>
-        <span class="brand-copy"><strong>PLAN</strong><small>DAILY MARKET BRIEF</small></span>
+      <a class="brand" href="#top" aria-label="PLAN، صفحه اصلی">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-name"><strong>PLAN</strong><small>TRADING DESK / DAILY RESEARCH</small></span>
       </a>
-      <div class="topbar-right">
-        <span class="offline-pill"><span class="status-dot"></span> استاتیک و آفلاین</span>
-        <button class="button button-quiet" id="printButton" type="button" title="چاپ یا ذخیره به‌صورت PDF">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg>
-          <span>چاپ / PDF</span>
-        </button>
+      <div class="header-meta">
+        <span class="connection-state"><i></i> دفترچهٔ محلی</span>
+        <span class="header-divider"></span>
+        <div class="header-date"><small>امروز به وقت باکو</small><strong id="todayDate">—</strong></div>
+        <button class="icon-button" id="printButton" type="button" aria-label="چاپ یا ذخیره PDF" title="چاپ / PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg></button>
       </div>
     </header>
 
-    <section class="page-intro" id="top">
-      <div class="intro-copy">
-        <div class="eyebrow"><span class="eyebrow-line"></span> DESK / DAILY OUTLOOK</div>
-        <h1>پلن روزانه؛ <span>تصمیم با سناریو، نه حدس</span></h1>
-        <p>نقشهٔ بازار برای روز معاملاتی انتخاب‌شده؛ از تصویر کلان تا شرط ورود، ابطال و کنترل ریسک.</p>
-      </div>
-      <div class="intro-date">
-        <span class="date-label">امروز</span>
-        <strong id="todayDate">—</strong>
-        <span class="date-sub" id="planCount">هنوز پلنی ثبت نشده</span>
-      </div>
-    </section>
-
-    <div class="control-bar" aria-label="کنترل پلن‌ها">
-      <label class="select-wrap">
-        <span>پلن مورد مطالعه</span>
-        <select id="planSelect" aria-label="انتخاب تاریخ پلن" disabled>
-          <option value="">هنوز پلنی ثبت نشده</option>
-        </select>
-      </label>
-      <label class="search-wrap">
-        <span class="sr-only">جست‌وجوی آرشیو</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-        <input id="searchInput" type="search" placeholder="جست‌وجو در آرشیو، نماد یا یادداشت…" autocomplete="off">
-      </label>
-      <div class="control-note"><span class="mini-dot"></span> داده‌ها فقط از فایل‌های همین پروژه خوانده می‌شوند</div>
-    </div>
-
-    <div class="layout-grid">
-      <aside class="side-nav" aria-label="ناوبری صفحه">
-        <span class="side-nav-title">در این پلن</span>
-        <a href="#overview" class="nav-link active"><span class="nav-index">01</span> دید کلی</a>
-        <a href="#technical" class="nav-link"><span class="nav-index">02</span> ساختار و سطوح</a>
-        <a href="#scenarios" class="nav-link"><span class="nav-index">03</span> سناریوها</a>
-        <a href="#calendar" class="nav-link"><span class="nav-index">04</span> خبر و سشن‌ها</a>
-        <a href="#risk" class="nav-link"><span class="nav-index">05</span> مدیریت ریسک</a>
-        <a href="#history" class="nav-link"><span class="nav-index">06</span> آرشیو</a>
-        <div class="side-nav-footer">
-          <span class="side-nav-title">قاعدهٔ اصلی</span>
-          <p>اگر شرط فعال‌سازی روشن نیست، ورود هم روشن نیست.</p>
+    <main id="main">
+      <section class="desk-heading" id="top">
+        <div>
+          <div class="eyebrow"><span></span> DAILY MARKET BRIEF</div>
+          <h1>نقشهٔ بازار، <em>قبل از تصمیم</em></h1>
+          <p>چارت و سناریوهای مشروط برای روز معاملاتی انتخاب‌شده؛ با قیمت و خبرِ قابل‌ردیابی، نه دادهٔ حدسی.</p>
         </div>
-      </aside>
+        <div class="desk-actions">
+          <label class="field-label" for="planSelect">تاریخ پلن</label>
+          <select id="planSelect" disabled><option value="">هنوز پلنی ثبت نشده</option></select>
+          <button class="button button-secondary" id="archiveJump" type="button">آرشیو روزها <span aria-hidden="true">↙</span></button>
+        </div>
+      </section>
 
-      <main id="main-content" class="main-content">
-        <section id="emptyState" class="empty-state" aria-live="polite">
-          <div class="empty-illustration" aria-hidden="true">
-            <div class="empty-ring ring-one"></div><div class="empty-ring ring-two"></div>
-            <div class="empty-card"><span></span><span></span><span></span><b>—</b></div>
+      <section id="emptyState" class="empty-state" aria-live="polite">
+        <div class="empty-chart-art" aria-hidden="true">
+          <div class="chart-art-grid"></div>
+          <div class="chart-art-line line-a"></div><div class="chart-art-line line-b"></div>
+          <div class="chart-art-line line-c"></div>
+          <div class="chart-art-candle c1"></div><div class="chart-art-candle c2"></div><div class="chart-art-candle c3"></div><div class="chart-art-candle c4"></div><div class="chart-art-candle c5"></div>
+          <span class="chart-art-tag">NO DATA</span>
+        </div>
+        <div class="empty-copy">
+          <span class="status-label"><i></i> WORKSPACE READY</span>
+          <h2>میز تحلیل آماده است؛ آرشیو هنوز خالی است</h2>
+          <p>برای اینکه حتی یک سطح یا کندل ساختگی وارد تصمیم معاملاتی نشود، تا زمان ثبت دادهٔ تأییدشده چارت بدون قیمت نمایش داده می‌شود. از اینجا به بعد هر روز فقط یک رکورد تازه به دفترچه اضافه می‌کنیم.</p>
+          <div class="empty-facts">
+            <div><span>01</span><strong>یک منبع داده</strong><small>قیمت، زمان و منبع کنار هم</small></div>
+            <div><span>02</span><strong>سناریوی شرطی</strong><small>تریگر و ابطال اجباری</small></div>
+            <div><span>03</span><strong>آرشیو تغییرناپذیر</strong><small>روز جدید، رکورد جدید</small></div>
           </div>
-          <div class="eyebrow">WORKSPACE READY</div>
-          <h2>ساختار آماده است؛ هنوز پلنی ثبت نشده</h2>
-          <p>این سایت عمداً هیچ قیمت یا تحلیل ساختگی نمایش نمی‌دهد. پس از وارد کردن پلن روز بعد در فایل داده، همین صفحه آن را به شکل یک داشبورد کامل نمایش می‌دهد.</p>
-          <div class="empty-meta"><span>تاریخ پیشنهادی بعدی</span><strong id="suggestedDate">—</strong></div>
-          <div class="empty-steps">
-            <div><span>01</span><p>فایل <b>data/plans.js</b> را باز کن.</p></div>
-            <div><span>02</span><p>قالب روزانهٔ مستندات را کپی و کامل کن.</p></div>
-            <div><span>03</span><p>پلن را با وضعیت draft ذخیره کن؛ پس از بازبینی به ready تغییر بده.</p></div>
+          <a class="doc-link" href="docs/DAILY-PLAN-SPEC.md">استاندارد ثبت پلن روزانه <span aria-hidden="true">←</span></a>
+        </div>
+      </section>
+
+      <section id="workspace" hidden>
+        <div class="workspace-topline">
+          <div class="plan-title-block">
+            <div class="plan-overline"><span id="planDate">—</span><span class="dot-separator">•</span><span id="planSession">جلسه ثبت نشده</span><span class="dot-separator">•</span><span id="planTimezone">Asia/Baku</span></div>
+            <h2 id="planTitle">پلن روزانه</h2>
+            <p id="planHeadline">—</p>
           </div>
-          <a class="text-link" href="docs/DAILY-PLAN-SPEC.md">مشاهدهٔ ساختار استاندارد پلن <span aria-hidden="true">←</span></a>
+          <div class="plan-state-block"><span id="planStatus" class="state-badge state-draft">پیش‌نویس</span><span id="planSourceState" class="source-note">منبع و زمان بررسی را کنترل کن</span></div>
+        </div>
+
+        <div class="summary-strip">
+          <div class="summary-cell"><span>جهت غالب</span><strong id="summaryBias">مشروط</strong><small id="summaryBiasNote">فقط پس از تأیید</small></div>
+          <div class="summary-cell"><span>رژیم بازار</span><strong id="summaryRegime">ثبت نشده</strong><small id="summaryDayType">نوع روز نامشخص</small></div>
+          <div class="summary-cell"><span>نمادهای زیرنظر</span><strong id="summaryAssets">۰</strong><small>نماد ثبت‌شده در این پلن</small></div>
+          <div class="summary-cell"><span>خبر پراثر</span><strong id="summaryEvents">۰</strong><small id="summaryEventsNote">تقویم را بررسی کن</small></div>
+          <div class="summary-cell summary-readiness"><span>کنترل کیفیت</span><strong id="summaryQuality">در انتظار بازبینی</strong><small id="qualityNote">تکمیل کنترل‌ها پیش از اجرا</small></div>
+        </div>
+
+        <div id="readinessBanner" class="readiness-banner" hidden></div>
+
+        <div class="terminal-grid">
+          <section class="chart-panel panel">
+            <div class="panel-heading chart-panel-heading">
+              <div class="chart-symbol-block">
+                <div class="symbol-avatar" id="symbolAvatar">—</div>
+                <div><div class="symbol-name-row"><h3 id="chartSymbol">انتخاب نماد</h3><span id="chartBias" class="bias-pill bias-neutral">مشروط</span></div><p id="chartSubtitle">چارت فقط از کندل‌های ثبت‌شده و تأییدشده ساخته می‌شود.</p></div>
+              </div>
+              <div class="chart-price-block"><span>قیمت مرجع</span><strong id="chartReferencePrice">ثبت نشده</strong><small id="chartReferenceTime">منبع/زمان ثبت نشده</small></div>
+            </div>
+            <div class="chart-toolbar">
+              <div id="assetTabs" class="asset-tabs" role="tablist" aria-label="انتخاب نماد"></div>
+              <div class="chart-tool-right"><div id="timeframeTabs" class="timeframe-tabs" role="group" aria-label="تایم‌فریم چارت"></div><button class="icon-button chart-reset" id="resetChart" type="button" title="بازنشانی نمایش چارت" aria-label="بازنشانی نمایش چارت">⌖</button></div>
+            </div>
+            <div class="chart-stage" id="chartStage">
+              <canvas id="priceChart" role="img" aria-label="چارت کندل‌ها و سطوح قیمت"></canvas>
+              <div id="chartEmpty" class="chart-empty"><span class="chart-empty-icon">⌁</span><strong>دادهٔ کندل ثبت نشده</strong><p>با افزودن OHLC تأییدشده به رکورد این نماد، چارت و سطوح اینجا رسم می‌شوند.</p></div>
+              <div id="chartTooltip" class="chart-tooltip" hidden></div>
+              <div class="chart-watermark" aria-hidden="true"><b>PLAN</b><span>ANALYSIS ONLY</span></div>
+            </div>
+            <div class="chart-legend" id="chartLegend"><span><i class="legend-candle-up"></i> صعودی</span><span><i class="legend-candle-down"></i> نزولی</span><span><i class="legend-level"></i> سطح کلیدی</span><span><i class="legend-zone"></i> ناحیه</span><span class="legend-note">چارت زنده نیست؛ داده با زمان منبع ثبت می‌شود.</span></div>
+            <div class="chart-data-strip" id="chartDataStrip"><span>کندل‌ها: —</span><span>آخرین زمان: —</span><span>تایم‌فریم: —</span></div>
+          </section>
+
+          <aside class="insight-rail">
+            <section class="panel rail-panel">
+              <div class="panel-heading"><div><span class="panel-eyebrow">DAY THESIS</span><h3>برداشت اصلی روز</h3></div><span class="heading-mark">01</span></div>
+              <p class="thesis-copy" id="planThesis">—</p>
+              <div class="thesis-tags"><span id="thesisDayType">نوع روز: —</span><span id="thesisRegime">رژیم: —</span></div>
+            </section>
+            <section class="panel rail-panel">
+              <div class="panel-heading"><div><span class="panel-eyebrow">ACTIVE SCENARIO</span><h3>سناریوی اولویت‌دار</h3></div><span class="heading-mark">02</span></div>
+              <div id="primaryScenario" class="primary-scenario"><div class="inline-empty">سناریویی ثبت نشده است.</div></div>
+            </section>
+            <section class="panel rail-panel">
+              <div class="panel-heading"><div><span class="panel-eyebrow">NEXT CATALYST</span><h3>رویداد نزدیک</h3></div><span class="heading-mark">03</span></div>
+              <div id="nextEvent" class="next-event"><div class="inline-empty">رویدادی ثبت نشده است.</div></div>
+            </section>
+          </aside>
+        </div>
+
+        <nav class="section-nav" aria-label="بخش‌های پلن">
+          <a href="#scenarios" class="section-nav-link active">سناریوها <span id="scenarioCount">۰</span></a>
+          <a href="#structure" class="section-nav-link">ساختار و سطوح</a>
+          <a href="#risk" class="section-nav-link">ریسک و اجرا</a>
+          <a href="#calendar" class="section-nav-link">خبر و سشن‌ها</a>
+          <a href="#history" class="section-nav-link">آرشیو</a>
+        </nav>
+
+        <section id="scenarios" class="content-section">
+          <div class="section-heading"><div><span class="panel-eyebrow">IF / THEN / ELSE</span><h2>سناریوهای معاملاتی</h2></div><p>سناریو فقط وقتی معتبر است که شرط فعال‌سازی، تأیید و ابطال روشن باشد. در غیر این صورت، عدم معامله تصمیم پیش‌فرض است.</p></div>
+          <div id="scenariosGrid" class="scenario-grid"></div>
+          <div id="avoidPanel" class="avoid-panel" hidden></div>
         </section>
 
-        <div id="workspace" hidden>
-          <section id="overview" class="section-block overview-block">
-            <div class="section-kicker">01 / DAILY THESIS</div>
-            <div class="hero-heading-row">
-              <div>
-                <h2 id="planTitle">پلن معاملاتی</h2>
-                <div class="hero-meta"><span id="planDate">—</span><span class="meta-separator">/</span><span id="planMeta">—</span></div>
-              </div>
-              <span id="planStatus" class="status-badge status-draft">پیش‌نویس</span>
-            </div>
-            <div id="readinessBanner" class="readiness-banner" hidden></div>
-            <div class="thesis-panel">
-              <div class="thesis-label"><span class="spark-mark">✦</span> برداشت اصلی روز</div>
-              <h3 id="headline">—</h3>
-              <p id="thesis">—</p>
-              <div class="thesis-footer"><span class="thesis-chip" id="dayType">نوع روز: ثبت نشده</span><span class="thesis-chip" id="marketRegime">رژیم بازار: ثبت نشده</span></div>
-            </div>
-            <div class="metrics-grid">
-              <article class="metric-card"><span class="metric-label">جهت غالب</span><strong id="metricBias">—</strong><small id="metricBiasNote">وابسته به شرایط</small></article>
-              <article class="metric-card"><span class="metric-label">کیفیت تحلیل</span><strong id="metricQuality">—</strong><small>درجهٔ اطمینان تحلیل‌گر، نه احتمال قطعی</small></article>
-              <article class="metric-card"><span class="metric-label">بازارهای زیرنظر</span><strong id="metricFocus">—</strong><small>نمادهای بررسی‌شده در این پلن</small></article>
-              <article class="metric-card"><span class="metric-label">خبر مهم</span><strong id="metricEvents">—</strong><small id="metricEventsNote">تقویم باید بررسی شود</small></article>
-            </div>
-            <div class="instrument-switcher">
-              <div><span class="section-kicker">MARKET LENS</span><h3>بررسی نماد</h3></div>
-              <div id="assetTabs" class="asset-tabs" role="tablist" aria-label="انتخاب نماد"></div>
-            </div>
-            <article class="instrument-summary card-surface">
-              <div class="instrument-summary-main">
-                <div class="instrument-title-line"><h3 id="instrumentTitle">—</h3><span id="instrumentBias" class="bias-badge bias-neutral">خنثی</span></div>
-                <p id="instrumentNotes">—</p>
-              </div>
-              <div class="reference-price"><span>قیمت مرجع ثبت‌شده</span><strong id="instrumentRefPrice">ثبت نشده</strong><small>قیمت را دستی از منبع خودت تأیید کن</small></div>
-            </article>
-          </section>
+        <section id="structure" class="content-section">
+          <div class="section-heading"><div><span class="panel-eyebrow">MULTI-TIMEFRAME MAP</span><h2>ساختار بازار و سطوح</h2></div><p>از تایم‌فریم بالاتر به پایین‌تر؛ سطوح فقط با دلیل مشخص و قیمت قابل‌ردیابی نگهداری می‌شوند.</p></div>
+          <div id="timeframesGrid" class="timeframes-grid"></div>
+          <div class="subsection-heading"><h3>سطوح کلیدی قیمت</h3><span class="subtle-note">در چارت هم نمایش داده می‌شوند، اگر قیمت عددی داشته باشند.</span></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>سطح</th><th>قیمت</th><th>نوع</th><th>TF</th><th>اهمیت</th><th>منطق واکنش</th></tr></thead><tbody id="levelsBody"></tbody></table><div id="levelsEmpty" class="table-empty" hidden>سطحی ثبت نشده است.</div></div>
+          <div class="detail-grid">
+            <section class="panel detail-panel"><div class="panel-heading"><div><span class="panel-eyebrow">SUPPLY / DEMAND</span><h3>ناحیه‌های مهم</h3></div></div><div id="zonesList" class="stack-list"></div></section>
+            <section class="panel detail-panel"><div class="panel-heading"><div><span class="panel-eyebrow">LIQUIDITY MAP</span><h3>نقدینگی و سویپ</h3></div></div><div id="liquidityList" class="stack-list"></div></section>
+          </div>
+        </section>
 
-          <section id="technical" class="section-block">
-            <div class="section-heading"><div><div class="section-kicker">02 / MARKET STRUCTURE</div><h2>ساختار تایم‌فریم و نقشهٔ قیمت</h2></div><p>چارچوب بالاتر جهت را می‌دهد؛ تایم‌فریم اجرایی فقط پس از تأیید وارد عمل می‌شود.</p></div>
-            <div id="timeframesGrid" class="timeframes-grid"></div>
-            <div class="subsection-heading"><div><span class="section-kicker">KEY PRICE MAP</span><h3>سطوح کلیدی</h3></div><span class="subtle-note">قیمت، دلیل اهمیت و واکنش مورد انتظار</span></div>
-            <div class="table-shell">
-              <table class="levels-table">
-                <thead><tr><th>سطح / ناحیه</th><th>قیمت</th><th>اهمیت</th><th>تایم‌فریم</th><th>شرط واکنش / دلیل</th></tr></thead>
-                <tbody id="levelsBody"></tbody>
-              </table>
-              <div id="levelsEmpty" class="table-empty" hidden>هنوز سطحی ثبت نشده است.</div>
-            </div>
-            <div class="two-column-grid">
-              <div class="subsection"><div class="subsection-heading"><div><span class="section-kicker">SUPPLY / DEMAND</span><h3>ناحیه‌ها</h3></div></div><div id="zonesGrid" class="stack-list"></div></div>
-              <div class="subsection"><div class="subsection-heading"><div><span class="section-kicker">LIQUIDITY MAP</span><h3>نقدینگی و سویپ</h3></div></div><div id="liquidityGrid" class="stack-list"></div></div>
-            </div>
-          </section>
+        <section id="risk" class="content-section">
+          <div class="section-heading"><div><span class="panel-eyebrow">RISK FIRST</span><h2>مدیریت ریسک و اجرای منضبط</h2></div><p>اگر ریسک، هزینه یا حد ابطال نامشخص است، پلن برای اجرا آماده نیست.</p></div>
+          <div id="riskGrid" class="risk-grid"></div>
+          <div class="detail-grid">
+            <section class="panel detail-panel"><div class="panel-heading"><div><span class="panel-eyebrow">EXECUTION RULES</span><h3>قواعد روز</h3></div></div><div id="riskRules" class="stack-list"></div></section>
+            <section class="panel detail-panel"><div class="panel-heading"><div><span class="panel-eyebrow">QUALITY GATE</span><h3>چک‌لیست پیش از اجرا</h3></div></div><div id="qualityChecks" class="check-list"></div></section>
+          </div>
+          <section class="panel review-panel"><div><span class="panel-eyebrow">AFTER THE SESSION</span><h3>بازبینی پس از بازار</h3><p id="reviewPrompt">پس از جلسه، نتیجه را بدون قضاوت احساسی ثبت کن.</p></div><ul id="reviewQuestions"></ul></section>
+        </section>
 
-          <section id="scenarios" class="section-block">
-            <div class="section-heading"><div><div class="section-kicker">03 / IF → THEN</div><h2>سناریوهای شرطی</h2></div><p>هر سناریو باید شرط فعال‌سازی، محل ابطال و برنامهٔ مدیریت معامله داشته باشد.</p></div>
-            <div id="scenariosGrid" class="scenarios-grid"></div>
-            <div id="avoidList" class="avoid-panel" hidden></div>
-          </section>
+        <section id="calendar" class="content-section">
+          <div class="section-heading"><div><span class="panel-eyebrow">TIME & CATALYSTS</span><h2>تقویم اقتصادی و سشن‌ها</h2></div><p>زمان‌ها بر اساس Asia/Baku هستند؛ زمان و اهمیت خبر باید از تقویم معتبر دوباره تأیید شوند.</p></div>
+          <div class="detail-grid"><section class="panel detail-panel"><div class="panel-heading"><div><span class="panel-eyebrow">ECONOMIC EVENTS</span><h3>رویدادها</h3></div></div><div id="eventsList" class="stack-list"></div></section><section class="panel detail-panel"><div class="panel-heading"><div><span class="panel-eyebrow">SESSION PLAN</span><h3>برنامهٔ سشن‌ها</h3></div></div><div id="sessionsList" class="stack-list"></div></section></div>
+          <div class="sources-panel"><h3>منابع و زمان راستی‌آزمایی</h3><div id="sourcesList" class="source-list"></div></div>
+        </section>
 
-          <section id="calendar" class="section-block">
-            <div class="section-heading"><div><div class="section-kicker">04 / TIME & CATALYSTS</div><h2>تقویم خبر و سشن‌ها</h2></div><p>زمان‌ها باید در منطقهٔ زمانی باکو ثبت شوند. منبع و وضعیت خبر را پیش از جلسه دوباره بررسی کن.</p></div>
-            <div class="two-column-grid calendar-grid">
-              <div class="subsection"><div class="subsection-heading"><div><span class="section-kicker">ECONOMIC EVENTS</span><h3>رویدادهای اقتصادی</h3></div></div><div id="eventsList" class="stack-list"></div></div>
-              <div class="subsection"><div class="subsection-heading"><div><span class="section-kicker">SESSION PLAN</span><h3>نقشهٔ سشن‌ها</h3></div></div><div id="sessionsGrid" class="stack-list"></div></div>
-            </div>
-          </section>
-
-          <section id="risk" class="section-block">
-            <div class="section-heading"><div><div class="section-kicker">05 / PRESERVE CAPITAL</div><h2>مدیریت ریسک و کنترل اجرا</h2></div><p>قبل از هر ورود، ریسک، حد ابطال و هزینه‌های معامله باید مشخص باشند.</p></div>
-            <div id="riskTiles" class="risk-grid"></div>
-            <div class="two-column-grid">
-              <div class="subsection"><div class="subsection-heading"><div><span class="section-kicker">EXECUTION RULES</span><h3>قواعد روز</h3></div></div><div id="riskRules" class="stack-list"></div></div>
-              <div class="subsection"><div class="subsection-heading"><div><span class="section-kicker">PRE-TRADE GATE</span><h3>چک‌لیست قبل از معامله</h3></div></div><div id="checklistGrid" class="checklist-list"></div></div>
-            </div>
-            <div id="reviewPanel" class="review-panel"></div>
-          </section>
-
-          <section id="history" class="section-block history-section">
-            <div class="section-heading"><div><div class="section-kicker">06 / REVIEW & ARCHIVE</div><h2>آرشیو روزهای ثبت‌شده</h2></div><p>پلن‌های قبلی حفظ می‌شوند؛ برای روز جدید یک ورودی تازه اضافه کن، نه اینکه تاریخ گذشته را بازنویسی کنی.</p></div>
-            <div id="historyList" class="history-list"></div>
-          </section>
-        </div>
-
-        <footer class="page-footer"><span>PLAN / STATIC MARKET JOURNAL</span><span>شرط روشن · ریسک معلوم · اجرای منضبط</span></footer>
-      </main>
-    </div>
+        <section id="history" class="content-section history-section">
+          <div class="section-heading"><div><span class="panel-eyebrow">DAILY JOURNAL</span><h2>آرشیو پلن‌ها</h2></div><label class="archive-search"><span class="sr-only">جست‌وجوی آرشیو</span><input id="searchInput" type="search" placeholder="جست‌وجو در تاریخ، نماد یا یادداشت…"><span aria-hidden="true">⌕</span></label></div>
+          <div id="historyList" class="history-list"></div>
+        </section>
+      </section>
+      <footer class="page-footer"><span>PLAN / DAILY RESEARCH JOURNAL</span><span>شرط روشن · منبع مشخص · ریسک معلوم</span><span>بدون اجرای سفارش یا دادهٔ زنده</span></footer>
+    </main>
   </div>
   <script src="data/plans.js"></script>
   <script src="assets/js/app.js"></script>

@@ -1,0 +1,29 @@
+name: Static quality checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: |
+          node --check assets/js/app.js
+          node --check data/plans.js
+          node --check scripts/validate-plans.mjs
+      - name: Validate daily plan data
+        run: node scripts/validate-plans.mjs
