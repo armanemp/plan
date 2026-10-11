@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1014">
+  <meta name="description" content="راهنمای میز تحلیل PLAN؛ طرز استفاده، ساختار پلن‌ها، حریم خصوصی و استقرار روی هاست.">
+  <title>راهنمای استفاده — PLAN</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/guide.css">
+</head>
+<body class="guide-body">
+  <header class="guide-topbar">
+    <a class="brand" href="index.html" aria-label="PLAN - داشبورد اصلی"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-copy"><strong>PLAN<span>.</span></strong><small>MARKET INTELLIGENCE</small></span></a>
+    <nav><a href="index.html#overview">داشبورد</a><a href="#how-to">راهنمای استفاده</a><a href="#hosting">استقرار روی هاست</a></nav>
+    <a class="btn btn-primary" href="index.html">رفتن به میز کار <span>↗</span></a>
+  </header>
+  <main class="guide-main">
+    <section class="guide-hero">
+      <div class="eyebrow"><span class="eyebrow-line"></span> PRODUCT GUIDE · STATIC WEB APP</div>
+      <h1>یک نقشهٔ روشن برای<br><em>تصمیم‌های منضبط بازار.</em></h1>
+      <p>PLAN برای آماده‌سازی پلن روزانه، نگهداری منطق هر سناریو، دیدن سطوح کلیدی و بازبینی نتیجه طراحی شده است. رابط کاربری داده تولید نمی‌کند؛ کیفیت تحلیل به کیفیت منابع و رکوردی بستگی دارد که ثبت می‌شود.</p>
+      <div class="guide-hero-actions"><a class="btn btn-primary" href="index.html#overview">باز کردن داشبورد ←</a><a class="btn" href="#data-contract">دیدن قرارداد داده</a></div>
+      <div class="guide-hero-stats"><div><strong>01</strong><span>یک رکورد مستقل برای هر روز</span></div><div><strong>02</strong><span>تریگر، ابطال و ریسک شفاف</span></div><div><strong>03</strong><span>آرشیو و ژورنال برای بازبینی</span></div></div>
+    </section>
+
+    <section class="guide-section" id="how-to">
+      <div class="guide-section-title"><div><span class="section-kicker">QUICK START</span><h2>از کجا شروع کنم؟</h2></div><p>مسیر پیشنهادی برای بررسی یک پلن بدون گم‌شدن بین بخش‌ها.</p></div>
+      <div class="guide-steps">
+        <article><span>01</span><h3>پلن و تاریخ را انتخاب کن</h3><p>از بالای داشبورد تاریخ موردنظر را انتخاب کن. وضعیت «پیش‌نویس» یعنی داده‌ها یا کنترل‌های لازم هنوز تکمیل نشده‌اند.</p><a href="index.html#overview">نمای کلی ←</a></article>
+        <article><span>02</span><h3>نماد و نمودار را بررسی کن</h3><p>کارت نماد، تایم‌فریم موجود و سطوح عددی را مقایسه کن. روی نمودار زوم کن، نشانگر را جابه‌جا کن و OHLC را بخوان.</p><a href="index.html#market-chart">نمودار بازار ←</a></article>
+        <article><span>03</span><h3>شرط فعال‌سازی و ابطال را بخوان</h3><p>هر سناریو باید توضیح دهد چه اتفاقی آن را فعال می‌کند، کجا اشتباه بودنش روشن می‌شود و کدام ریسک خاص ممکن است نتیجه را تغییر دهد.</p><a href="index.html#scenarios">سناریوها ←</a></article>
+        <article><span>04</span><h3>ریسک را قبل از اجرا کامل کن</h3><p>اسپرد، کمیسیون، لغزش، ریسک مجاز حساب و حد زیان روزانه باید واقعی و مشخص باشند. چک‌لیست محلی جای تأیید بازار را نمی‌گیرد.</p><a href="index.html#risk">ریسک و اجرا ←</a></article>
+      </div>
+    </section>
+
+    <section class="guide-section" id="data-contract">
+      <div class="guide-section-title"><div><span class="section-kicker">DATA CONTRACT</span><h2>ساختار هر پلن روزانه</h2></div><p>فایل داده مرجع رابط کاربری است. روز جدید را اضافه کن؛ تاریخ‌های گذشته را بی‌ردپا بازنویسی نکن.</p></div>
+      <div class="guide-content-grid">
+        <article class="guide-card"><span class="guide-card-icon">⌁</span><h3>دادهٔ بازار و منبع</h3><p>قیمت مرجع، زمان ثبت، OHLC، سطوح و مناطق باید از منبع مشخص بیایند. منطقهٔ زمانی پلن به‌صورت پیش‌فرض Asia/Baku است.</p><ul><li>زمان کندل‌ها باید صعودی و یکتا باشد.</li><li>بیشینه باید از Open و Close پایین‌تر نباشد.</li><li>کمینه باید از Open و Close بالاتر نباشد.</li><li>حجم ناموجود باید null باشد، نه عدد حدسی.</li></ul></article>
+        <article class="guide-card"><span class="guide-card-icon">⇄</span><h3>سناریوهای قابل بررسی</h3><p>سناریوی خوب یک پیش‌بینی قطعی نیست؛ مجموعه‌ای از شرط‌ها و واکنش‌های از پیش تعریف‌شده است.</p><ul><li>منطق و شرایط فعال‌سازی</li><li>تأیید و نقطهٔ ابطال</li><li>ورود، حد ضرر و اهداف یا دلیل نامشخص بودن آن‌ها</li><li>مدیریت معامله و ریسک ویژهٔ روز</li></ul></article>
+        <article class="guide-card"><span class="guide-card-icon">◈</span><h3>کیفیت و مدیریت ریسک</h3><p>تا مشخص‌شدن ریسک شخصی، هزینهٔ ورود و تریگر اجرایی، وضعیت draft باید باقی بماند.</p><ul><li>حداکثر زیان روزانه و ریسک هر معامله</li><li>بررسی زمان انتشار خبر</li><li>حفظ فاصلهٔ حد ضرر متناسب با ساختار</li><li>عدم معامله در نبود تریگر تأییدشده</li></ul></article>
+        <article class="guide-card"><span class="guide-card-icon">▤</span><h3>آرشیو و ژورنال</h3><p>آرشیو پلن‌ها از data/plans.js خوانده می‌شود. یادداشت‌های ژورنال در localStorage مرورگر جاری ذخیره می‌شوند.</p><ul><li>آرشیو داده‌ها در مخزن کد نگهداری می‌شود.</li><li>یادداشت ژورنال بین دستگاه‌ها همگام نیست.</li><li>پاک‌کردن داده‌های مرورگر ممکن است یادداشت‌ها را حذف کند.</li><li>ژورنال محلی جای پشتیبان‌گیری نیست.</li></ul></article>
+      </div>
+    </section>
+
+    <section class="guide-section" id="hosting">
+      <div class="guide-section-title"><div><span class="section-kicker">DEPLOYMENT</span><h2>انتشار روی هاست استاتیک</h2></div><p>برای اجرای نسخهٔ فعلی، Node.js یا build اجباری نیست؛ وب‌سرور باید فایل‌ها را با ساختار نسبی حفظ کند.</p></div>
+      <div class="hosting-grid">
+        <article class="guide-card"><span class="hosting-label">OPTION A</span><h3>هاست معمولی یا cPanel</h3><ol><li>محتویات مخزن را دریافت کن.</li><li>فایل‌های سایت را در public_html آپلود کن؛ پوشهٔ .git لازم نیست.</li><li>ساختار پوشه‌های assets، data و docs را حفظ کن.</li><li>برای نصب‌پذیری و Service Worker گواهی HTTPS فعال باشد.</li><li>صفحه را روی موبایل و دسکتاپ آزمایش کن.</li></ol></article>
+        <article class="guide-card"><span class="hosting-label">OPTION B</span><h3>GitHub Pages</h3><ol><li>به Settings → Pages در مخزن برو.</li><li>Source را روی GitHub Actions بگذار.</li><li>Workflow موجود در .github/workflows/pages.yml با هر push روی main اجرا می‌شود.</li><li>وضعیت اجرای Workflow و URL انتشار را در Actions بررسی کن.</li><li>برای دامنهٔ سفارشی، DNS و HTTPS را نیز تنظیم کن.</li></ol><p class="guide-callout">تنظیم Source روی GitHub Actions در تنظیمات Pages لازم است؛ فایل Workflow به‌تنهایی تضمین نمی‌کند سایت منتشر شده باشد.</p></article>
+      </div>
+      <div class="guide-callout"><strong>نکتهٔ مهم دربارهٔ «سرویس دادن»:</strong> نسخهٔ فعلی یک وب‌اپ استاتیک مناسب نمایش عمومی پلن‌هاست، اما سیستم اشتراک امن چندکاربره نیست. ورود کاربر، پرداخت، محدودیت دسترسی سمت سرور، پنل مدیریت، API قیمت زنده و ذخیره‌سازی ابری در این نسخه وجود ندارند. هیچ محتوای محرمانه یا پلن ویژهٔ مشترکین را داخل فایل‌های عمومی قرار نده.</div>
+    </section>
+
+    <section class="guide-section" id="online-libraries">
+      <div class="guide-section-title"><div><span class="section-kicker">DEPENDENCIES</span><h2>کتابخانه‌ها و اتصال آنلاین</h2></div></div>
+      <div class="dependency-list">
+        <article><div><h3>TradingView Lightweight Charts</h3><p>نمودار کندلی/خطی، محور قیمت، Crosshair و کنترل مقیاس.</p></div><span>CDN · v5.2.1</span><a href="https://github.com/tradingview/lightweight-charts" target="_blank" rel="noopener noreferrer">مخزن رسمی ↗</a></article>
+        <article><div><h3>Vazirmatn + Inter</h3><p>فونت خوانا برای فارسی و تایپوگرافی/اعداد لاتین.</p></div><span>Google Fonts</span><a href="https://fonts.google.com/" target="_blank" rel="noopener noreferrer">کتابخانهٔ فونت ↗</a></article>
+        <article><div><h3>Service Worker</h3><p>کش پوستهٔ اصلی برای بازشدن فایل‌های محلی هنگام قطع اینترنت؛ نمودار و فونت بیرونی همچنان به اتصال نیاز دارند.</p></div><span>Browser API</span><span>بدون کتابخانهٔ اضافی</span></article>
+      </div>
+      <p class="guide-fineprint">برای استفاده از نمودار، انتساب TradingView حفظ شده است. دادهٔ کندل ثبت‌شده به معنی قیمت زنده نیست؛ برای قیمت و خبر زنده باید یک منبع مجاز و قابل اعتماد به صورت مستقل متصل شود.</p>
+    </section>
+
+    <section class="guide-section guide-last">
+      <div class="guide-section-title"><div><span class="section-kicker">BOUNDARIES & SAFETY</span><h2>حدود نسخهٔ فعلی</h2></div></div>
+      <div class="guide-boundaries"><p>PLAN ابزار تحقیق و برنامه‌ریزی است؛ توصیهٔ شخصی سرمایه‌گذاری، کارگزار یا موتور ارسال سفارش نیست.</p><p>این نسخه Backend ندارد. داده‌های پلن در فایل JavaScript عمومی قرار دارند و برای هر بازدیدکننده قابل دریافت‌اند. کلیدهای API خصوصی، رمز عبور یا پلن محدود به اشتراک نباید در فایل‌های عمومی قرار بگیرند.</p><p>قبل از ارائهٔ نسخهٔ پولی به کاربران، باید احراز هویت سمت سرور، مجوز دسترسی، مدیریت مشترکین و پرداخت، سیاست حریم خصوصی، شرایط استفاده، پشتیبان‌گیری و مانیتورینگ جداگانه طراحی و پیاده‌سازی شوند.</p></div>
+    </section>
+    <footer class="guide-footer"><a class="brand" href="index.html"><span class="brand-mark"><i></i><i></i><i></i></span><span class="brand-copy"><strong>PLAN<span>.</span></strong><small>MARKET INTELLIGENCE</small></span></a><span>شرط روشن · منبع مشخص · ریسک معلوم</span><a href="index.html">بازگشت به داشبورد ↑</a></footer>
+  </main>
+</body>
+</html>
