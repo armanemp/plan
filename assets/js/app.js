@@ -4,7 +4,7 @@
   const book = window.PLAN_BOOK || {version:2,timezone:"Asia/Baku",plans:[]};
   const plans = Array.isArray(book.plans) ? book.plans.slice() : [];
   const errors = [];
-  const state = {date:null,assetIndex:0,timeframe:null,query:"",chartGeometry:null};
+  const state = {date:null,assetIndex:0,timeframe:null,query:"",chartGeometry:null,chartApi:null,chartSeries:null,chartType:"candles",showVolume:false};
   const palette = {bg:"#0c1116",grid:"#243039",text:"#84939d",muted:"#52616b",green:"#65dfb4",red:"#f07d87",amber:"#e7bd79",blue:"#8fb9f4",zone:"#4a806a"};
   const num = value => { if(typeof value==="number" && Number.isFinite(value)) return value; if(typeof value==="string" && value.trim()!==""){const n=Number(value.replace(/,/g,""));return Number.isFinite(n)?n:null;} return null; };
   const list = value => Array.isArray(value) ? value : [];
@@ -95,52 +95,104 @@
     const charts=list(a.charts);
     setHtml("timeframeTabs",charts.map(c=>'<button type="button" class="tf-tab" data-timeframe="'+esc(c.timeframe)+'" aria-pressed="'+(c.timeframe===state.timeframe)+'" '+(!list(c.candles).length?'disabled':'')+'>'+esc(c.timeframe)+'</button>').join(""));
   }
+  function chartTime(value){
+    const match=String(value||"").match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
+    if(match)return {year:Number(match[1]),month:Number(match[2]),day:Number(match[3])};
+    const d=new Date(value);
+    return {year:d.getUTCFullYear(),month:d.getUTCMonth()+1,day:d.getUTCDate()};
+  }
+  function chartTimeKey(value){
+    if(value&&typeof value==="object"&&"year" in value)return String(value.year)+"-"+String(value.month).padStart(2,"0")+"-"+String(value.day).padStart(2,"0");
+    return String(value||"").slice(0,10);
+  }
+  function formatPrice(value){
+    const n=Number(value);
+    if(!Number.isFinite(n))return "—";
+    return n.toLocaleString("en-US",{maximumFractionDigits:n>=100?2:n>=1?5:6});
+  }
+  function updateOHLC(c){
+    if(!c){setHtml("chartOHLC",'<span>O <b>—</b></span><span>H <b>—</b></span><span>L <b>—</b></span><span>C <b>—</b></span>');return;}
+    setHtml("chartOHLC",'<span>O <b>'+esc(formatPrice(c.open))+'</b></span><span>H <b>'+esc(formatPrice(c.high))+'</b></span><span>L <b>'+esc(formatPrice(c.low))+'</b></span><span>C <b>'+esc(formatPrice(c.close))+'</b></span>');
+  }
   function renderChart(a,p,chart){
-    const candles=list(chart&&chart.candles);const canvas=$("priceChart");
-    $("chartEmpty").hidden=candles.length>0;
-    setText("chartDataStrip", "");
-    $("chartDataStrip").innerHTML='<span>کندل‌ها: '+esc(faNumber(candles.length))+'</span><span>آخرین زمان: '+esc(candles.length?formatTime(candles[candles.length-1].time):"—")+'</span><span>تایم‌فریم: '+esc(chart&&chart.timeframe||"—")+'</span>';
+    const candles=list(chart&&chart.candles);
+    const container=$("priceChart");
+    if(state.chartApi){state.chartApi.remove();state.chartApi=null;state.chartSeries=null;}
+    $("chartEmpty").hidden=candles.length>0&&!!window.LightweightCharts;
+    $("chartEmpty").innerHTML='<span class="chart-empty-icon">⌁</span><strong>'+(!window.LightweightCharts?"کتابخانهٔ چارت بارگذاری نشد":candles.length?"":"دادهٔ کندل ثبت نشده")+'</strong><p>'+(!window.LightweightCharts?"برای نمایش نمودار تعاملی، اتصال اینترنت و دسترسی به CDN لازم است.":candles.length?"":"با افزودن OHLC تأییدشده به رکورد این نماد، چارت و سطوح اینجا رسم می‌شوند.")+'</p>';
+    setHtml("chartDataStrip",'<span>کندل‌ها: '+esc(faNumber(candles.length))+'</span><span>آخرین زمان: '+esc(candles.length?formatTime(candles[candles.length-1].time):"—")+'</span><span>تایم‌فریم: '+esc(chart&&chart.timeframe||"—")+'</span>');
     const levels=assetLevels(p,a).filter(l=>num(l.price)!==null);
     const zones=assetZones(p,a).filter(z=>num(z.low)!==null&&num(z.high)!==null);
     const marks=list(chart&&chart.markers);
     state.chartGeometry={candles,levels,zones,marks};
-    drawChart(canvas,candles,levels,zones,marks);
-    setText("chartReferenceTime",str(a.referenceAt||a.referenceSource,candles.length?"آخرین کندل: "+formatTime(candles[candles.length-1].time):"منبع/زمان ثبت نشده"));
-  }
-  function formatTime(value){
-    const d=typeof value==="number"?new Date(value<1e12?value*1000:value):new Date(value);
-    if(Number.isNaN(d.getTime()))return String(value||"—");
-    return new Intl.DateTimeFormat("fa-IR",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Baku"}).format(d);
-  }
-  function drawChart(canvas,candles,levels,zones,markers){
-    const rect=canvas.getBoundingClientRect();const dpr=Math.max(1,window.devicePixelRatio||1);
-    const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
-    canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
-    const ctx=canvas.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle=palette.bg;ctx.fillRect(0,0,w,h);
-    const pad={left:18,right:66,top:22,bottom:32};const plotW=w-pad.left-pad.right,plotH=h-pad.top-pad.bottom;
-    ctx.strokeStyle=palette.grid;ctx.lineWidth=1;ctx.setLineDash([]);
-    for(let i=0;i<=6;i++){const y=pad.top+plotH*i/6;ctx.beginPath();ctx.moveTo(pad.left,y+.5);ctx.lineTo(w-pad.right,y+.5);ctx.stroke();}
-    for(let i=0;i<=6;i++){const x=pad.left+plotW*i/6;ctx.beginPath();ctx.moveTo(x+.5,pad.top);ctx.lineTo(x+.5,h-pad.bottom);ctx.stroke();}
-    if(!candles.length){ctx.fillStyle=palette.text;ctx.font="10px Tahoma";ctx.textAlign="left";for(let i=0;i<=6;i++){const y=pad.top+plotH*i/6;ctx.fillText("—",w-pad.right+12,y+3);}return;}
-    const allPrices=[];
-    candles.forEach(c=>{allPrices.push(Number(c.high),Number(c.low));});
-    levels.forEach(l=>allPrices.push(Number(l.price)));
-    zones.forEach(z=>allPrices.push(Number(z.low),Number(z.high)));
-    let min=Math.min.apply(null,allPrices.filter(Number.isFinite)),max=Math.max.apply(null,allPrices.filter(Number.isFinite));
-    if(!Number.isFinite(min)||!Number.isFinite(max)){min=0;max=1;}
-    const spread=max-min||Math.max(Math.abs(max)*.002,1);min-=spread*.08;max+=spread*.08;
-    const yPrice=price=>pad.top+(max-price)/(max-min)*plotH;
-    const xAt=i=>pad.left+plotW*(i+.5)/candles.length;
-    const step=plotW/candles.length,candleW=Math.max(2,Math.min(11,step*.58));
-    zones.forEach(z=>{const top=yPrice(Math.max(Number(z.low),Number(z.high))),bottom=yPrice(Math.min(Number(z.low),Number(z.high)));ctx.fillStyle=z.type==="supply"?"rgba(240,125,135,.09)":"rgba(101,223,180,.09)";ctx.fillRect(pad.left,top,plotW,Math.max(1,bottom-top));ctx.strokeStyle=z.type==="supply"?"rgba(240,125,135,.35)":"rgba(101,223,180,.35)";ctx.setLineDash([3,4]);ctx.strokeRect(pad.left,top,plotW,Math.max(1,bottom-top));ctx.setLineDash([]);});
-    levels.forEach(l=>{const y=yPrice(Number(l.price));if(y<pad.top||y>h-pad.bottom)return;ctx.strokeStyle=l.color||palette.amber;ctx.lineWidth=l.importance==="high"?1.3:1;ctx.setLineDash(l.style==="solid"?[]:[4,4]);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(w-pad.right,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=l.color||palette.amber;ctx.fillRect(w-pad.right+3,y-8,pad.right-6,16);ctx.fillStyle="#0c1116";ctx.font="9px monospace";ctx.textAlign="center";ctx.fillText(String(l.label||l.name||l.price).slice(0,10),w-pad.right/2,y+3);});
-    candles.forEach((c,i)=>{const x=xAt(i),o=yPrice(Number(c.open)),cl=yPrice(Number(c.close)),hi=yPrice(Number(c.high)),lo=yPrice(Number(c.low)),up=Number(c.close)>=Number(c.open),color=up?palette.green:palette.red;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,hi);ctx.lineTo(x,lo);ctx.stroke();const top=Math.min(o,cl),bodyH=Math.max(1,Math.abs(cl-o));ctx.fillRect(x-candleW/2,top,candleW,bodyH);});
-    markers.forEach(m=>{const index=candles.findIndex(c=>String(c.time)===String(m.time));if(index<0)return;const c=candles[index],up=m.direction==="bullish";const y=yPrice(up?Number(c.low):Number(c.high))+(up?11:-11);ctx.fillStyle=up?palette.green:palette.red;ctx.beginPath();ctx.moveTo(xAt(index),y+(up?5:-5));ctx.lineTo(xAt(index)-4,y+(up?-3:3));ctx.lineTo(xAt(index)+4,y+(up?-3:3));ctx.closePath();ctx.fill();});
-    ctx.fillStyle=palette.text;ctx.font="10px monospace";ctx.textAlign="left";
-    for(let i=0;i<=6;i++){const price=max-(max-min)*i/6;ctx.fillText(price.toFixed(price>=100?2:5).replace(/0+$/,"").replace(/\.$/,""),w-pad.right+7,pad.top+plotH*i/6+3);}
-    ctx.textAlign="center";ctx.fillStyle=palette.muted;
-    [0,Math.floor((candles.length-1)/3),Math.floor((candles.length-1)*2/3),candles.length-1].forEach(i=>{const x=xAt(i);ctx.fillText(String(formatTime(candles[i].time)).replace(/\u200e/g,""),x,h-11);});
-    state.chartGeometry={candles,levels,zones,markers,plot:{left:pad.left,top:pad.top,width:plotW,height:plotH,min,max,w,h,dpr}};
+    const volumeButton=$("chartVolumeToggle");
+    const hasVolume=candles.some(c=>num(c.volume)!==null&&num(c.volume)>=0);
+    volumeButton.disabled=!hasVolume;
+    volumeButton.title=hasVolume?"نمایش یا پنهان‌کردن حجم ثبت‌شده":"حجم واقعی برای این نماد/تایم‌فریم ثبت نشده؛ حجم حدسی ساخته نمی‌شود";
+    if(!hasVolume)state.showVolume=false;
+    $("chartTypeToggle").textContent=state.chartType==="candles"?"کندلی":"خطی";
+    $("chartTypeToggle").setAttribute("aria-pressed",String(state.chartType==="line"));
+    volumeButton.setAttribute("aria-pressed",String(state.showVolume));
+    updateOHLC(candles[candles.length-1]);
+    if(!window.LightweightCharts||!candles.length){setText("chartReferenceTime",str(a.referenceAt||a.referenceSource,"منبع/زمان ثبت نشده"));return;}
+    const TV=window.LightweightCharts;
+    const isDark=true;
+    state.chartApi=TV.createChart(container,{
+      autoSize:true,
+      layout:{background:{type:TV.ColorType.Solid,color:"#0c1116"},textColor:"#83919b",fontFamily:'Inter, Vazirmatn, Tahoma, sans-serif',fontSize:11,attributionLogo:true},
+      grid:{vertLines:{color:"#1b252d"},horzLines:{color:"#1b252d"}},
+      crosshair:{mode:TV.CrosshairMode.Normal,vertLine:{color:"#63727d",width:1,style:TV.LineStyle.Dashed,labelBackgroundColor:"#26343d"},horzLine:{color:"#63727d",width:1,style:TV.LineStyle.Dashed,labelBackgroundColor:"#26343d"}},
+      rightPriceScale:{borderColor:"#2a353f",autoScale:true,scaleMargins:{top:.12,bottom:.12}},
+      timeScale:{borderColor:"#2a353f",timeVisible:true,secondsVisible:false,rightOffset:2,barSpacing:22,minBarSpacing:4},
+      localization:{locale:"en-GB",dateFormat:"dd MMM yyyy",priceFormatter:formatPrice},
+      handleScroll:{mouseWheel:true,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},
+      handleScale:{mouseWheel:true,pinch:true,axisPressedMouseMove:true,axisDoubleClickReset:true}
+    });
+    let series;
+    if(state.chartType==="line"){
+      series=state.chartApi.addSeries(TV.LineSeries,{color:"#65dfb4",lineWidth:2,priceLineVisible:true,lastValueVisible:true,crosshairMarkerVisible:true});
+      series.setData(candles.map(c=>({time:chartTime(c.time),value:Number(c.close)})));
+    }else{
+      series=state.chartApi.addSeries(TV.CandlestickSeries,{
+        upColor:"#26a69a",downColor:"#ef5350",borderUpColor:"#26a69a",borderDownColor:"#ef5350",
+        wickUpColor:"#26a69a",wickDownColor:"#ef5350",priceLineVisible:true,lastValueVisible:true
+      });
+      series.setData(candles.map(c=>({time:chartTime(c.time),open:Number(c.open),high:Number(c.high),low:Number(c.low),close:Number(c.close)})));
+    }
+    state.chartSeries=series;
+    levels.forEach(l=>{
+      const color=l.color||palette.amber;
+      try{series.createPriceLine({price:Number(l.price),color,lineWidth:l.importance==="high"?2:1,lineStyle:l.style==="solid"?TV.LineStyle.Solid:TV.LineStyle.Dashed,axisLabelVisible:true,title:String(l.label||l.name||"سطح").slice(0,18)});}catch(_){}
+    });
+    zones.forEach(z=>{
+      const supply=z.type==="supply";
+      const color=supply?"rgba(240,125,135,.7)":"rgba(101,223,180,.7)";
+      [Number(z.low),Number(z.high)].forEach((price,i)=>{try{series.createPriceLine({price,color,lineWidth:1,lineStyle:TV.LineStyle.Dotted,axisLabelVisible:false,title:String(z.name||"ناحیه").slice(0,12)+(i?" H":" L")});}catch(_){}});
+    });
+    const validMarkers=marks.filter(m=>candles.some(c=>chartTimeKey(c.time)===chartTimeKey(m.time))).map(m=>({
+      time:chartTime(m.time),position:m.direction==="bullish"?"belowBar":"aboveBar",
+      color:m.direction==="bullish"?"#65dfb4":"#f07d87",shape:m.direction==="bullish"?"arrowUp":"arrowDown",
+      text:String(m.label||m.text||"").slice(0,20)
+    }));
+    if(validMarkers.length&&typeof TV.createSeriesMarkers==="function")TV.createSeriesMarkers(series,validMarkers);
+    if(state.showVolume&&hasVolume){
+      const volumes=candles.filter(c=>num(c.volume)!==null).map(c=>({time:chartTime(c.time),value:Number(c.volume),color:Number(c.close)>=Number(c.open)?"rgba(38,166,154,.55)":"rgba(239,83,80,.55)"}));
+      const volumeSeries=state.chartApi.addSeries(TV.HistogramSeries,{priceFormat:{type:"volume"},priceScaleId:"volume",lastValueVisible:false,priceLineVisible:false});
+      volumeSeries.setData(volumes);
+      state.chartApi.priceScale("volume").applyOptions({scaleMargins:{top:.82,bottom:0},visible:false});
+    }
+    state.chartApi.timeScale().fitContent();
+    state.chartApi.subscribeCrosshairMove(param=>{
+      if(!param||!param.time){updateOHLC(candles[candles.length-1]);return;}
+      const datum=param.seriesData&&param.seriesData.get(series);
+      if(!datum){updateOHLC(candles[candles.length-1]);return;}
+      if(state.chartType==="line"){updateOHLC({open:datum.value,high:datum.value,low:datum.value,close:datum.value});return;}
+      updateOHLC(datum);
+      const dateKey=chartTimeKey(param.time);
+      const original=candles.find(c=>chartTimeKey(c.time)===dateKey);
+      if(original)setText("chartReferenceTime",formatTime(original.time)+" · "+str(a.referenceSource,"منبع ثبت نشده"));
+    });
+    setText("chartReferenceTime",str(a.referenceAt||a.referenceSource,"آخرین کندل: "+formatTime(candles[candles.length-1].time)));
   }
   function renderThesis(p){
     setText("planThesis",str(p.thesis,"برداشت اصلی روز ثبت نشده است."));
@@ -209,18 +261,15 @@
     $("printButton").addEventListener("click",()=>window.print());
     $("archiveJump").addEventListener("click",()=>{const history=$("history");if(history)history.scrollIntoView({behavior:"smooth",block:"start"});});
     $("resetChart").addEventListener("click",()=>{const a=activeAsset(),chart=chartFor(a,state.timeframe);if(chart)renderChart(a,activePlan(),chart);});
-    const canvas=$("priceChart");
-    canvas.addEventListener("pointermove",e=>{
-      const g=state.chartGeometry;if(!g||!g.candles.length||!g.plot)return;
-      const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,p=g.plot;
-      if(x<p.left||x>p.left+p.width||y<p.top||y>p.top+p.height){$("chartTooltip").hidden=true;return;}
-      const i=Math.max(0,Math.min(g.candles.length-1,Math.floor((x-p.left)/(p.width/g.candles.length))));
-      const c=g.candles[i];$("chartTooltip").hidden=false;
-      $("chartTooltip").innerHTML="T "+esc(formatTime(c.time))+"<br>O "+esc(c.open)+"　H "+esc(c.high)+"<br>L "+esc(c.low)+"　C "+esc(c.close);
+    $("chartTypeToggle").addEventListener("click",()=>{
+      state.chartType=state.chartType==="candles"?"line":"candles";
+      const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));
     });
-    canvas.addEventListener("pointerleave",()=>$("chartTooltip").hidden=true);
-    let resizeFrame=0;
-    window.addEventListener("resize",()=>{if(resizeFrame)return;resizeFrame=window.requestAnimationFrame(()=>{resizeFrame=0;const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));});});
+    $("chartVolumeToggle").addEventListener("click",()=>{
+      if($("chartVolumeToggle").disabled)return;
+      state.showVolume=!state.showVolume;
+      const p=activePlan(),a=activeAsset();if(p&&a)renderChart(a,p,chartFor(a,state.timeframe));
+    });
     document.querySelectorAll(".section-nav-link").forEach(link=>link.addEventListener("click",()=>{document.querySelectorAll(".section-nav-link").forEach(x=>x.classList.remove("active"));link.classList.add("active");}));
   }
   validateBook();
