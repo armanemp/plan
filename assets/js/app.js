@@ -458,7 +458,14 @@
     let resizeFrame=0;
     window.addEventListener("resize",()=>{if(resizeFrame)return;resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;if(state.chartApi){const el=$("priceChart");if(el&&el.clientWidth>0&&el.clientHeight>0)state.chartApi.resize(el.clientWidth,el.clientHeight);}});});
   }
+  function registerServiceWorker(){
+    if(!("serviceWorker" in navigator))return;
+    const localHost=location.hostname==="localhost"||location.hostname==="127.0.0.1";
+    if(location.protocol!=="https:"&&!localHost)return;
+    navigator.serviceWorker.register(new URL("sw.js",document.baseURI).href,{scope:"./"}).catch(()=>{});
+  }
   function init(){
+    registerServiceWorker();
     getOverrides();validateBook();initHeader();initNavigation();bindEvents();
     if(byDate.length){if(location.hash&&$(location.hash.slice(1)))state.date=byDate.find(p=>p.date===state.date)?.date||byDate[0].date;render();}
     else renderEmpty();
