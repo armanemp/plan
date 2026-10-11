@@ -96,7 +96,7 @@
     setHtml("timeframeTabs",charts.map(c=>'<button type="button" class="tf-tab" data-timeframe="'+esc(c.timeframe)+'" aria-pressed="'+(c.timeframe===state.timeframe)+'" '+(!list(c.candles).length?'disabled':'')+'>'+esc(c.timeframe)+'</button>').join(""));
   }
   function chartTime(value){
-    const match=String(value||"").match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
+    const match=String(value||"").match(/^(\d{4})-(\d{2})-(\d{2})/);
     if(match)return {year:Number(match[1]),month:Number(match[2]),day:Number(match[3])};
     const d=new Date(value);
     return {year:d.getUTCFullYear(),month:d.getUTCMonth()+1,day:d.getUTCDate()};
@@ -136,7 +136,6 @@
     updateOHLC(candles[candles.length-1]);
     if(!window.LightweightCharts||!candles.length){setText("chartReferenceTime",str(a.referenceAt||a.referenceSource,"منبع/زمان ثبت نشده"));return;}
     const TV=window.LightweightCharts;
-    const isDark=true;
     state.chartApi=TV.createChart(container,{
       autoSize:true,
       layout:{background:{type:TV.ColorType.Solid,color:"#0c1116"},textColor:"#83919b",fontFamily:'Inter, Vazirmatn, Tahoma, sans-serif',fontSize:11,attributionLogo:true},
