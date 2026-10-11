@@ -226,5 +226,5 @@
   validateBook();
   if(errors.length){$("emptyState").hidden=false;$("emptyState").innerHTML='<div class="empty-copy"><span class="status-label"><i></i> DATA VALIDATION</span><h2>ساختار داده نیاز به اصلاح دارد</h2><p>'+errors.map(esc).join("<br>")+'</p><a class="doc-link" href="docs/DAILY-PLAN-SPEC.md">استاندارد داده <span>←</span></a></div>';}
   initHeader();bindEvents();
-  if(byDate.length){state.date=byDate[0].date;render();}else{renderHistory();}
+  if(errors.length){ /* Keep the validation report visible; do not hide it behind a plan render. */ }else if(byDate.length){state.date=byDate[0].date;render();}else{renderHistory();}
 })();
