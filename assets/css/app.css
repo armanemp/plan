@@ -82,3 +82,10 @@ input,select{max-width:100%}
   .page-footer{padding-bottom:18px}
 }
 @media(prefers-reduced-motion:reduce){button:active{transform:none}}
+
+.chart-helpbar{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid var(--line-soft);background:#0e1419;color:#788893;font-size:9px}
+.chart-helpbar span{display:inline-flex;align-items:center;gap:5px}
+.chart-helpbar b{font-weight:600;color:#b8c6cc}
+.chart-helpbar .chart-help-note{margin-right:auto;color:#d2b77e}
+@media(max-width:560px){.chart-helpbar{gap:6px 10px;padding:8px;font-size:8px}.chart-helpbar .chart-help-note{flex-basis:100%;margin-right:0}}
+@media print{.chart-helpbar{display:none!important}}
