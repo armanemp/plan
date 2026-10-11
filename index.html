@@ -7,6 +7,9 @@
   <meta name="description" content="میز تحلیل روزانه بازار؛ چارت، سناریوهای شرطی، سطوح، رویدادها و کنترل ریسک در یک دفترچه آرشیوی.">
   <title>PLAN — میز تحلیل بازار</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
@@ -91,10 +94,11 @@
             </div>
             <div class="chart-toolbar">
               <div id="assetTabs" class="asset-tabs" role="tablist" aria-label="انتخاب نماد"></div>
-              <div class="chart-tool-right"><div id="timeframeTabs" class="timeframe-tabs" role="group" aria-label="تایم‌فریم چارت"></div><button class="icon-button chart-reset" id="resetChart" type="button" title="بازنشانی نمایش چارت" aria-label="بازنشانی نمایش چارت">⌖</button></div>
+              <div class="chart-tool-right"><div id="timeframeTabs" class="timeframe-tabs" role="group" aria-label="تایم‌فریم چارت"></div><button class="chart-mode-button" id="chartTypeToggle" type="button" aria-pressed="false" title="تغییر بین نمودار کندلی و خطی">کندلی</button><button class="chart-mode-button" id="chartVolumeToggle" type="button" aria-pressed="false" title="نمایش حجم واقعی در صورت وجود داده">حجم</button><button class="icon-button chart-reset" id="resetChart" type="button" title="بازنشانی نمایش چارت" aria-label="بازنشانی نمایش چارت">⌖</button></div>
             </div>
             <div class="chart-stage" id="chartStage">
-              <canvas id="priceChart" role="img" aria-label="چارت کندل‌ها و سطوح قیمت"></canvas>
+              <div id="priceChart" role="img" aria-label="چارت تعاملی قیمت؛ با اسکرول بزرگ‌نمایی و با کشیدن نمودار جابه‌جا می‌شود"></div>
+              <div id="chartOHLC" class="chart-ohlc-readout" aria-live="polite"><span>O <b>—</b></span><span>H <b>—</b></span><span>L <b>—</b></span><span>C <b>—</b></span></div>
               <div id="chartEmpty" class="chart-empty"><span class="chart-empty-icon">⌁</span><strong>دادهٔ کندل ثبت نشده</strong><p>با افزودن OHLC تأییدشده به رکورد این نماد، چارت و سطوح اینجا رسم می‌شوند.</p></div>
               <div id="chartTooltip" class="chart-tooltip" hidden></div>
               <div class="chart-watermark" aria-hidden="true"><b>PLAN</b><span>ANALYSIS ONLY</span></div>
@@ -169,7 +173,8 @@
       <footer class="page-footer"><span>PLAN / DAILY RESEARCH JOURNAL</span><span>شرط روشن · منبع مشخص · ریسک معلوم</span><span>بدون اجرای سفارش یا دادهٔ زنده</span></footer>
     </main>
   </div>
-  <script src="data/plans.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script defer src="https://unpkg.com/lightweight-charts@5.0.9/dist/lightweight-charts.standalone.production.js"></script>
+  <script defer src="data/plans.js"></script>
+  <script defer src="assets/js/app.js"></script>
 </body>
 </html>
